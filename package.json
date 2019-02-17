@@ -1,0 +1,11 @@
+{
+  "name": "getfiles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "getFiles.js",
+  "scripts": {
+    "test": "node getFiles"
+  },
+  "author": "JungHyunKwon",
+  "license": "ISC"
+}
