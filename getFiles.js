@@ -22,16 +22,16 @@ module.exports = (options, callback) => {
 		let directory = options.directory;
 		
 		//문자일 때
-		if(typeof directory === 'string') {
-			let recursive = options.recursive;
-			
-			//불리언이 아닐 때
-			if(typeof recursive !== 'boolean') {
-				recursive = false;
-			}
-			
+		if(typeof directory === 'string') {			
 			//함수일 때
 			if(typeof callback === 'function') {
+				let recursive = options.recursive;
+				
+				//불리언이 아닐 때
+				if(typeof recursive !== 'boolean') {
+					recursive = false;
+				}
+
 				fs.readdir(directory, (err, files) => {
 					//오류가 있을 때
 					if(err) {
