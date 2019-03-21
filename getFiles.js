@@ -25,19 +25,18 @@ module.exports = (options, callback) => {
 		if(typeof directory === 'string') {			
 			//함수일 때
 			if(typeof callback === 'function') {
-				let recursive = options.recursive;
-				
-				//불리언이 아닐 때
-				if(typeof recursive !== 'boolean') {
-					recursive = false;
-				}
-
 				fs.readdir(directory, (err, files) => {
 					//오류가 있을 때
 					if(err) {
 						console.error(directory + '를 읽을 수 없습니다.');
 					}else{
-						let filesLength = files.length;
+						let filesLength = files.length,
+							recursive = options.recursive;
+				
+						//불리언이 아닐 때
+						if(typeof recursive !== 'boolean') {
+							recursive = false;
+						}
 
 						(function loopFiles(index) {
 							//파일 개수만큼 반복
