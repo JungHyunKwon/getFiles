@@ -41,20 +41,20 @@ module.exports = (options, callback) => {
 						(function loopFiles(index) {
 							//파일 개수만큼 반복
 							if(filesLength > index) {
-								let filepath = directory + '/' + files[index];
+								let fileDirectory = directory + '/' + files[index];
 
-								fs.stat(filepath, (err, stats) => {
+								fs.stat(fileDirectory, (err, stats) => {
 									//오류가 있을 때
 									if(err) {
-										console.error(filepath + '를 조회 할 수 없습니다.');
+										console.error(fileDirectory + '를 조회 할 수 없습니다.');
 
 									//파일일 때
 									}else if(stats.isFile()) {
-										callback(filepath, stats);
+										callback(fileDirectory, stats);
 									
 									//재귀이면서 폴더일 때
 									}else if(recursive && stats.isDirectory()) {
-										options.directory = filepath;
+										options.directory = fileDirectory;
 
 										getFiles(options, callback);
 									}
