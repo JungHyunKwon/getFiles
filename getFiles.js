@@ -18,20 +18,24 @@ const fs = require('fs');
        directory : string,
 	   recursive : boolean,
    }
-   @param {function} callback {string}
+   @param {function} callback {array}
  * @since 2019-02-05
  */
 function getFiles(options, callback) {
+	let callbackIsFunction = typeof callback === 'function',
+		result = [];
+
 	//객체일 때
 	if(options) {
 		let directory = options.directory;
 
 		fs.readdir(directory, (err, files) => {
-			//오류가 없을 때
-			if(!err) {
+			//오류가 있을 때
+			if(err) {
+				callback(result);
+			}else{
 				let filesLength = files.length,
-					recursive = options.recursive,
-					callbackIsFunction = typeof callback === 'function';
+					recursive = options.recursive;
 
 				//불리언이 아닐 때
 				if(typeof recursive !== 'boolean') {
@@ -41,29 +45,45 @@ function getFiles(options, callback) {
 				(function loopFiles(index) {
 					//파일 개수만큼 반복
 					if(filesLength > index) {
-						let fileDirectory = directory + '/' + files[index];
+						let fileDirectory = directory + '/' + files[index],
+							nextIndex = index + 1;
 
 						fs.stat(fileDirectory, (err, stats) => {						
 							//오류가 없을 때
-							if(!err) {
+							if(err) {
+								loopFiles(nextIndex);
+							}else{
 								//함수이면서 파일일 때
-								if(callbackIsFunction && stats.isFile()) {
-									callback(fileDirectory);
+								if(stats.isFile()) {
+									result.push(fileDirectory);
+									
+									loopFiles(nextIndex);
 
 								//재귀이면서 폴더일 때
 								}else if(recursive && stats.isDirectory()) {
-									options.directory = fileDirectory;
+									getFiles({
+										directory : fileDirectory,
+										recursive : recursive
+									}, value => {
+										result = result.concat(value);
 
-									getFiles(options, callback);
+										loopFiles(nextIndex);
+									});
 								}
 							}
-
-							loopFiles(index + 1);
 						});	
+
+					//함수일 때
+					}else if(callbackIsFunction) {
+						callback(result);
 					}
 				})(0);
 			}
 		});
+
+	//함수일 때
+	}else if(callbackIsFunction) {
+		callback(result);
 	}
 }
 
