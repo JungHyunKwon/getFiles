@@ -64,8 +64,8 @@ function getFiles(options, callback) {
 									getFiles({
 										directory : fileDirectory,
 										recursive : recursive
-									}, value => {
-										result = result.concat(value);
+									}, fileDirectories => {
+										result = result.concat(fileDirectories);
 
 										loopFiles(nextIndex);
 									});
