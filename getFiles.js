@@ -30,8 +30,8 @@ function getFiles(options, callback) {
 		let directory = options.directory;
 
 		fs.readdir(directory, (err, files) => {
-			//오류가 있을 때
-			if(err) {
+			//오류가 있으면서 함수일 때
+			if(err && callbackIsFunction) {
 				callback(result);
 			}else{
 				let filesLength = files.length,
