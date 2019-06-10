@@ -2,6 +2,11 @@
  * @names getFiles
  * @author JungHyunKwon
  * @since 2019-02-05
+ * @param {obejct} options {
+ *     directory : string,
+ *	   recursive : boolean,
+ * }
+ * @param {function} callback {string, object}
  */
 
 'use strict';
@@ -13,65 +18,52 @@ const fs = require('fs');
        directory : string,
 	   recursive : boolean,
    }
-   @param {function} callback {string, object}
+   @param {function} callback {string}
  * @since 2019-02-05
  */
-module.exports = (options, callback) => {
-	//객체일 때
+function getFiles(options, callback) {
 	if(options) {
 		let directory = options.directory;
-		
-		//문자일 때
-		if(typeof directory === 'string') {			
-			//함수일 때
-			if(typeof callback === 'function') {
-				fs.readdir(directory, (err, files) => {
-					//오류가 있을 때
-					if(err) {
-						console.error(directory + '를 읽을 수 없습니다.');
-					}else{
-						let filesLength = files.length,
-							recursive = options.recursive;
-				
-						//불리언이 아닐 때
-						if(typeof recursive !== 'boolean') {
-							options.recursive = recursive = false;
-						}
 
-						(function loopFiles(index) {
-							//파일 개수만큼 반복
-							if(filesLength > index) {
-								let fileDirectory = directory + '/' + files[index];
+		fs.readdir(directory, (err, files) => {
+			//오류가 없을 때
+			if(!err) {
+				let filesLength = files.length,
+					recursive = options.recursive,
+					callbackIsFunction = typeof callback === 'function';
 
-								fs.stat(fileDirectory, (err, stats) => {
-									//오류가 있을 때
-									if(err) {
-										console.error(fileDirectory + '를 조회 할 수 없습니다.');
+				//불리언이 아닐 때
+				if(typeof recursive !== 'boolean') {
+					recursive = false;
+				}
 
-									//파일일 때
-									}else if(stats.isFile()) {
-										callback(fileDirectory, stats);
-									
-									//재귀이면서 폴더일 때
-									}else if(recursive && stats.isDirectory()) {
-										options.directory = fileDirectory;
+				(function loopFiles(index) {
+					//파일 개수만큼 반복
+					if(filesLength > index) {
+						let fileDirectory = directory + '/' + files[index];
 
-										getFiles(options, callback);
-									}
+						fs.stat(fileDirectory, (err, stats) => {						
+							//오류가 없을 때
+							if(!err) {
+								//함수이면서 파일일 때
+								if(callbackIsFunction && stats.isFile()) {
+									callback(fileDirectory);
 
-									loopFiles(index + 1);
-								});	
+								//재귀이면서 폴더일 때
+								}else if(recursive && stats.isDirectory()) {
+									options.directory = fileDirectory;
+
+									getFiles(options, callback);
+								}
 							}
-						})(0);
+
+							loopFiles(index + 1);
+						});	
 					}
-				});
-			}else{
-				console.error('callback : 함수가 아닙니다.');
+				})(0);
 			}
-		}else{
-			console.error('directory : 문자가 아닙니다.');
-		}
-	}else{
-		console.error('options : 객체가 아닙니다.');
+		});
 	}
-};
+}
+
+module.exports = getFiles;
