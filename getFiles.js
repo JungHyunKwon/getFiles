@@ -22,6 +22,7 @@ const fs = require('fs');
  * @since 2019-02-05
  */
 function getFiles(options, callback) {
+	//객체일 때
 	if(options) {
 		let directory = options.directory;
 
