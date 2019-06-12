@@ -46,10 +46,11 @@ function getFiles(options, callback) {
 					(function loopFiles(index) {
 						//파일 개수만큼 반복
 						if(filesLength > index) {
-							let fileDirectory = directory + '/' + files[index],
-								nextIndex = index + 1;
+							let fileDirectory = directory + '/' + files[index];
 
-							fs.stat(fileDirectory, (err, stats) => {						
+							fs.stat(fileDirectory, (err, stats) => {	
+								let nextIndex = index + 1;
+
 								//오류가 없을 때
 								if(err) {
 									loopFiles(nextIndex);
