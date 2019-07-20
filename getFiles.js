@@ -28,51 +28,51 @@ function getFiles(options, callback) {
 
 		//객체일 때
 		if(options) {
-			let directory = options.directory;
+			let optionsDirectory = options.directory;
 
-			fs.readdir(directory, (err, files) => {
+			fs.readdir(optionsDirectory, (err, directories) => {
 				//오류가 있을 때
 				if(err) {
 					callback(result);
 				}else{
-					let filesLength = files.length,
-						recursive = options.recursive;
+					let directoriesLength = directories.length,
+						optionsRecursive = options.recursive;
 
 					//불리언이 아닐 때
-					if(typeof recursive !== 'boolean') {
-						recursive = false;
+					if(typeof optionsRecursive !== 'boolean') {
+						optionsRecursive = false;
 					}
 
-					(function loopFiles(index) {
-						//파일 개수만큼 반복
-						if(filesLength > index) {
-							let fileDirectory = directory + '/' + files[index];
+					(function loopDirectories(index) {
+						//개수만큼 반복
+						if(directoriesLength > index) {
+							let directory = optionsDirectory + '/' + files[index];
 
-							fs.stat(fileDirectory, (err, stats) => {	
+							fs.stat(directory, (err, stats) => {	
 								let nextIndex = index + 1;
 
-								//오류가 없을 때
+								//오류가 있을 때
 								if(err) {
-									loopFiles(nextIndex);
+									loopDirectories(nextIndex);
 								}else{
-									//함수이면서 파일일 때
+									//파일일 때
 									if(stats.isFile()) {
-										result.push(fileDirectory);
+										result.push(directory);
 										
-										loopFiles(nextIndex);
+										loopDirectories(nextIndex);
 
 									//재귀이면서 폴더일 때
-									}else if(recursive && stats.isDirectory()) {
+									}else if(optionsRecursive && stats.isDirectory()) {
 										getFiles({
-											directory : fileDirectory,
-											recursive : recursive
-										}, directories => {
-											result = result.concat(directories);
+											directory : directory,
+											recursive : optionsRecursive
+										}, files => {
+											result = result.concat(files);
 
-											loopFiles(nextIndex);
+											loopDirectories(nextIndex);
 										});
 									}else{
-										loopFiles(nextIndex);
+										loopDirectories(nextIndex);
 									}
 								}
 							});
