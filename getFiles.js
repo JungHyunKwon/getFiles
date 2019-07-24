@@ -28,25 +28,25 @@ function getFiles(options, callback) {
 
 		//객체일 때
 		if(options) {
-			let optionsDirectory = options.directory;
+			let baseDirectory = options.directory;
 
-			fs.readdir(optionsDirectory, (err, directories) => {
+			fs.readdir(baseDirectory, (err, directories) => {
 				//오류가 있을 때
 				if(err) {
 					callback(result);
 				}else{
 					let directoriesLength = directories.length,
-						optionsRecursive = options.recursive;
+						recursive = options.recursive;
 
 					//불리언이 아닐 때
-					if(typeof optionsRecursive !== 'boolean') {
-						optionsRecursive = false;
+					if(typeof recursive !== 'boolean') {
+						recursive = false;
 					}
 
 					(function loopDirectories(index) {
 						//개수만큼 반복
 						if(directoriesLength > index) {
-							let directory = optionsDirectory + '/' + files[index];
+							let directory = baseDirectory + '/' + files[index];
 
 							fs.stat(directory, (err, stats) => {	
 								let nextIndex = index + 1;
@@ -62,10 +62,10 @@ function getFiles(options, callback) {
 										loopDirectories(nextIndex);
 
 									//재귀이면서 폴더일 때
-									}else if(optionsRecursive && stats.isDirectory()) {
+									}else if(recursive && stats.isDirectory()) {
 										getFiles({
 											directory : directory,
-											recursive : optionsRecursive
+											recursive : recursive
 										}, files => {
 											result = result.concat(files);
 
