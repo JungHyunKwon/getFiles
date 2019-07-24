@@ -3,24 +3,16 @@
  * @author JungHyunKwon
  * @since 2019-02-05
  * @param {obejct} options {
- *     directory : string,
- *	   recursive : boolean,
- * }
- * @param {function} callback {string, object}
+       directory : string,
+	   recursive : boolean
+   }
+   @param {function} callback {array}
  */
 
 'use strict';
 
 const fs = require('fs');
 
-/**
- * @param {obejct} options {
-       directory : string,
-	   recursive : boolean
-   }
-   @param {function} callback {array}
- * @since 2019-02-05
- */
 function getFiles(options, callback) {
 	//함수일 때
 	if(typeof callback === 'function') {
